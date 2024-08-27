@@ -245,6 +245,7 @@ dependencies = [
  "apollo-federation",
  "apollo-federation-types",
  "apollo-parser 0.7.7",
+ "debounced",
  "futures",
  "indexmap 2.4.0",
  "itertools 0.13.0",
@@ -1680,6 +1681,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "debounced"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "107e5cd9b5163c19751e53eef634cae25cf5ed5f6d0c81125feaa92e43703cc7"
+dependencies = [
+ "futures-timer",
+ "futures-util",
+]
+
+[[package]]
 name = "deflate64"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2795,7 +2806,7 @@ dependencies = [
  "httpdate",
  "itoa",
  "pin-project-lite",
- "socket2 0.4.10",
+ "socket2 0.5.7",
  "tokio",
  "tower-service",
  "tracing",
@@ -5597,7 +5608,7 @@ version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "38d1e02fca405f6280643174a50c942219f0bbf4dbf7d480f1dd864d6f211ae5"
 dependencies = [
- "heck 0.4.1",
+ "heck 0.5.0",
  "proc-macro2",
  "quote",
  "syn 2.0.72",

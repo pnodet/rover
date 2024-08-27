@@ -96,7 +96,8 @@ async fn run_composer_in_thread(
         while let Some(next_definitions) = receiver.try_next().ok().flatten() {
             definitions = next_definitions
         }
-        let id = language_server.next_composition_id();
+        let id = language_server.next_composition_id().await;
+        language_server.increment_composition_id().await;
         tracing::info!("Received message: {:?}", definitions);
         dbg!(&definitions);
 
