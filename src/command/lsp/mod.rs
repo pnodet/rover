@@ -1,5 +1,4 @@
 use core::panic;
-use std::sync::Arc;
 
 use apollo_federation_types::{
     config::{FederationVersion, SupergraphConfig},
@@ -10,7 +9,6 @@ use apollo_language_server_core::server::{ApolloLanguageServer, Config};
 use clap::Parser;
 use futures::{channel::mpsc::Receiver, StreamExt};
 use serde::Serialize;
-use tokio::fs;
 use tower_lsp::Server;
 
 use super::supergraph::compose::Compose;
@@ -77,8 +75,8 @@ async fn run_composer_in_thread(
     mut receiver: Receiver<Vec<SubgraphDefinition>>,
     lsp_opts: LspOpts,
     client_config: StudioClientConfig,
-    language_server: Arc<ApolloLanguageServer>,
-) -> () {
+    language_server: ApolloLanguageServer,
+) {
     let composer = Compose::new(lsp_opts.plugin_opts.clone());
     let federation_version =
         dbg!(get_federation_version(lsp_opts.clone(), client_config.clone()).await);
@@ -96,8 +94,6 @@ async fn run_composer_in_thread(
         while let Some(next_definitions) = receiver.try_next().ok().flatten() {
             definitions = next_definitions
         }
-        let id = language_server.next_composition_id().await;
-        language_server.increment_composition_id().await;
         tracing::info!("Received message: {:?}", definitions);
         dbg!(&definitions);
 
@@ -118,7 +114,6 @@ async fn run_composer_in_thread(
                             .into_iter()
                             .map(Into::into)
                             .collect(),
-                        id,
                     )
                     .await
             }
@@ -130,7 +125,6 @@ async fn run_composer_in_thread(
                     .composition_did_update(
                         None,
                         build_errors.into_iter().map(Into::into).collect(),
-                        id,
                     )
                     .await
             }
@@ -140,20 +134,9 @@ async fn run_composer_in_thread(
 }
 
 async fn get_federation_version(
-    mut lsp_opts: LspOpts,
+    lsp_opts: LspOpts,
     client_config: StudioClientConfig,
 ) -> FederationVersion {
-    if lsp_opts.supergraph_yaml.is_none() {
-        let default_supergraph_yaml_path = "supergraph.yaml";
-        if fs::try_exists(default_supergraph_yaml_path)
-            .await
-            .is_ok_and(|exists| exists)
-        {
-            lsp_opts.supergraph_yaml = Some(FileDescriptorType::File(
-                default_supergraph_yaml_path.into(),
-            ));
-        }
-    }
     if let Some(supergraph_yaml) = &lsp_opts.supergraph_yaml {
         if let Ok(supergraph_config) = resolve_supergraph_yaml(
             supergraph_yaml,
