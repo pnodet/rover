@@ -53,7 +53,6 @@ async fn run_lsp(client_config: StudioClientConfig, lsp_opts: &LspOpts) {
     let (service, socket, receiver) = ApolloLanguageServer::build_service(Config {
         enable_auto_composition: true,
         force_federation: false,
-        enable_connectors: true,
     });
 
     let language_server = service.inner().clone();
