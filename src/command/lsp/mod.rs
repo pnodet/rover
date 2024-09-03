@@ -53,6 +53,7 @@ async fn run_lsp(client_config: StudioClientConfig, lsp_opts: &LspOpts) {
     let (service, socket, receiver) = ApolloLanguageServer::build_service(Config {
         enable_auto_composition: true,
         force_federation: false,
+        disable_telemetry: false,
     });
 
     let language_server = service.inner().clone();
@@ -113,6 +114,7 @@ async fn run_composer_in_thread(
                             .into_iter()
                             .map(Into::into)
                             .collect(),
+                        None,
                     )
                     .await
             }
@@ -124,6 +126,7 @@ async fn run_composer_in_thread(
                     .composition_did_update(
                         None,
                         build_errors.into_iter().map(Into::into).collect(),
+                        None,
                     )
                     .await
             }
