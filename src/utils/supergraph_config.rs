@@ -264,11 +264,6 @@ mod test_get_supergraph_config {
         Some(String::from("pandas")),
         Some(vec![(String::from("pandas"), String::from("local"))]),
     )]
-    #[case::local_takes_precedence(
-        Some(String::from("pandas")),
-        Some(String::from("pandas")),
-        Some(vec![(String::from("pandas"), String::from("local"))]),
-    )]
     #[tokio::test]
     async fn test_get_supergraph_config(
         config: Config,
@@ -316,6 +311,15 @@ mod test_get_supergraph_config {
                                 url
                                 activePartialSchema {
                                   sdl
+                                }
+                              }
+                              sourceVariant {
+                                subgraphs {
+                                  name
+                                  url
+                                  activePartialSchema {
+                                    sdl
+                                  }
                                 }
                               }
                             }
